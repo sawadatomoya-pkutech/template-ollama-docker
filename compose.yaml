@@ -1,0 +1,36 @@
+services:
+  client:
+    build:
+      context: .
+      dockerfile: ./container/Containerfile
+      args:
+        - SRCDIR=${SRCDIR}
+    tty: true
+    init: true
+    depends_on:
+      - ollama
+    command: ["uv", "run", "--directory", "src", "main.py"]
+
+  ollama:
+    image: docker.io/ollama/ollama:latest
+    container_name: ollama
+    hostname: ollama
+    init: true
+    tty: true
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+
+    ## If you have a GPU
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           capabilities: [gpu]
+    #           device_ids: ['0']
+
+volumes:
+  ollama:
+    name: ollama-models

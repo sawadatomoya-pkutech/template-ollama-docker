@@ -1,0 +1,12 @@
+FROM docker.io/python:3.12-slim-bookworm
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /app/
+
+# Add uv.lock file in the COPY and --frozen option in uv sync for locked env.
+COPY .python-version pyproject.toml /app/
+RUN uv sync
+
+ARG SRCDIR
+COPY ${SRCDIR} /app/
